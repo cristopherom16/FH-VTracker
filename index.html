@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLOATING HOLIDAY TRACKER</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        amberCustom: '#f59e0b',
+                        amberDark: '#b45309',
+                        blueCustom: '#1e3a8a',
+                        navyCustom: '#0f172a',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Base Gridlines & Table Borders in Amber */
+        table, th, td {
+            border: 1.5px solid #f59e0b !important;
+        }
+
+        /* Custom Status Conditional Styles */
+        .status-attended {
+            background-color: #15803d !important; /* Bold Green */
+            color: #ffffff !important;           /* Bold White Text */
+            font-weight: 700;
+        }
+        .status-scheduled {
+            background-color: #4b5563 !important; /* Bold Gray */
+            color: #ffffff !important;           /* Bold White Text */
+            font-weight: 700;
+        }
+        .status-not-attended {
+            background-color: #0369a1 !important; /* Bold Peacock Blue */
+            color: #ffffff !important;           /* Bold White Text */
+            font-weight: 700;
+        }
+        .status-expired {
+            background-color: #b91c1c !important; /* Bold Red */
+            color: #ffffff !important;           /* Bold White Text */
+            font-weight: 700;
+        }
+        .status-vacation {
+            background-color: #86efac !important; /* Light Green */
+            color: #000000 !important;           /* Bold Black Text */
+            font-weight: 800;
+        }
+
+        /* Granted & Outcome Tag Styles */
+        .taken-active {
+            background-color: #bae6fd !important; /* Light Blue */
+            color: #000000 !important;           /* Bold Black Text */
+            font-weight: 800;
+        }
+        .not-granted-active {
+            background-color: #fca5a5 !important; /* Light Red */
+            color: #000000 !important;           /* Bold Black Text */
+            font-weight: 800;
+        }
+        .expired-active {
+            background-color: #b91c1c !important; /* Bold Red */
+            color: #ffffff !important;           /* Bold White Text */
+            font-weight: 800;
+        }
+        .vacation-active {
+            background-color: #86efac !important; /* Light Green */
+            color: #000000 !important;           /* Bold Black Text */
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body class="bg-amber-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans p-2 md:p-6 min-h-screen transition-colors duration-200">
+
+    <!-- Header Principal -->
+    <header class="bg-amber-500 border-4 border-amber-600 rounded-lg p-5 mb-6 shadow-xl text-center">
+        <h1 class="text-3xl md:text-5xl font-black text-blue-950 tracking-wider uppercase">
+            FLOATING HOLIDAY TRACKER
+        </h1>
+        <p class="text-blue-900 font-bold mt-1 text-sm md:text-base uppercase tracking-widest">
+            Full Annual Calendar & Agent Attendance Tracking System
+        </p>
+    </header>
+
+    <!-- Filters & Quick Actions Bar -->
+    <section class="bg-blue-900 dark:bg-slate-900 border-2 border-amber-400 rounded-lg p-4 mb-6 shadow-md text-white">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Branch Filter -->
+            <div class="w-full md:w-1/2">
+                <label class="block text-xs font-bold uppercase mb-1 text-amber-300">Filter by Branch:</label>
+                <select id="branchFilter" onchange="applyFilters()" class="w-full p-2.5 rounded bg-amber-100 dark:bg-slate-800 text-blue-950 dark:text-amber-300 font-extrabold border-2 border-amber-500 focus:outline-none">
+                    <option value="GUA">GUA (Guatemala)</option>
+                    <option value="COL">COLOMBIA</option>
+                    <option value="AH">AFTER HOURS</option>
+                </select>
+            </div>
+
+            <!-- Agent Search -->
+            <div class="w-full md:w-1/2">
+                <label class="block text-xs font-bold uppercase mb-1 text-amber-300">Search Agent:</label>
+                <input type="text" id="searchFilter" onkeyup="applyFilters()" placeholder="Type agent name..." class="w-full p-2 rounded bg-amber-100 dark:bg-slate-800 text-blue-950 dark:text-slate-100 font-bold border-2 border-amber-500 focus:outline-none placeholder-blue-900/50 dark:placeholder-slate-400">
+            </div>
+
+            <!-- Add Agent Action Button -->
+            <div class="w-full md:w-auto flex items-end justify-end">
+                <button onclick="openAddModal()" class="w-full md:w-auto bg-amber-400 hover:bg-amber-300 text-blue-950 font-black px-5 py-2.5 rounded border-2 border-amber-600 uppercase text-xs tracking-wider shadow whitespace-nowrap">
+                    + Add New Agent
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Main Agents Container -->
+    <main id="agentsContainer" class="space-y-8">
+        <!-- Rendered dynamically via JavaScript -->
+    </main>
+
+    <!-- Botón Flotante Pequeño SOLO con Ícono (Esquina Inferior Izquierda) -->
+    <div class="fixed bottom-3 left-3 z-50">
+        <button onclick="toggleDarkMode()" class="bg-amber-500 hover:bg-amber-400 text-blue-950 p-2 rounded-full border-2 border-amber-700 shadow-2xl transition-transform active:scale-90 flex items-center justify-center w-9 h-9 text-base" title="Toggle Light/Dark Mode">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+
+    <!-- Modal for Edit / Add Agent -->
+    <div id="agentModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-slate-900 border-4 border-amber-500 rounded-xl p-6 w-full max-w-md shadow-2xl text-slate-900 dark:text-slate-100">
+            <h3 id="modalTitle" class="text-xl font-black text-blue-950 dark:text-amber-400 uppercase mb-4">Edit Agent Information</h3>
+            <input type="hidden" id="editAgentIndex">
+            
+            <div class="space-y-4 text-xs font-bold">
+                <div>
+                    <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Agent Name:</label>
+                    <input type="text" id="modalName" class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                </div>
+                <div>
+                    <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Email Address:</label>
+                    <input type="email" id="modalEmail" placeholder="agent@gohighway.com" class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                </div>
+                <div>
+                    <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Branch:</label>
+                    <select id="modalBranch" class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                        <option value="GUA">GUA</option>
+                        <option value="COL">COL</option>
+                        <option value="AH">AH</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Team:</label>
+                    <input type="text" id="modalTeam" class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                </div>
+                <div>
+                    <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Supervisor:</label>
+                    <input type="text" id="modalSupervisor" class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="closeModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded font-bold uppercase text-xs">Cancel</button>
+                <button onclick="saveAgent()" class="px-4 py-2 bg-amber-500 text-blue-950 font-black rounded uppercase text-xs hover:bg-amber-400">Save Agent</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        const monthsData = [
+            { name: "January", days: 31, startDay: 4, holidays: { 1: { name: "New Years Day", cat: "Major", exp: "Expires end of year" }, 19: { name: "MLK Day", cat: "Minor", exp: "Exp: Apr 19" } } },
+            { name: "February", days: 28, startDay: 0, holidays: { 16: { name: "Presidents Day", cat: "Minor", exp: "Exp: May 16" } } },
+            { name: "March", days: 31, startDay: 0, holidays: {} },
+            { name: "April", days: 30, startDay: 3, holidays: { 3: { name: "Good Friday", cat: "Minor", exp: "Exp: Jul 3" } } },
+            { name: "May", days: 31, startDay: 5, holidays: { 25: { name: "Memorial Day", cat: "Middle", exp: "Exp: Aug 25" } } },
+            { name: "June", days: 30, startDay: 1, holidays: {} },
+            { name: "July", days: 31, startDay: 3, holidays: { 4: { name: "4th of July", cat: "Major", exp: "Exp: Oct 4" } } },
+            { name: "August", days: 31, startDay: 6, holidays: {} },
+            { name: "September", days: 30, startDay: 2, holidays: { 7: { name: "Labor Day", cat: "Middle", exp: "Exp: Dec 7" } } },
+            { name: "October", days: 31, startDay: 4, holidays: { 12: { name: "Columbus Day", cat: "Minor", exp: "Exp: Jan 12" } } },
+            { name: "November", days: 30, startDay: 0, holidays: { 11: { name: "Veterans Day", cat: "Minor", exp: "Exp: Feb 11" }, 26: { name: "Thanksgiving", cat: "Major", exp: "Exp: Feb 26" } } },
+            { name: "December", days: 31, startDay: 2, holidays: { 25: { name: "Christmas Eve", cat: "Major", exp: "Expires end of year" }, 31: { name: "NY Eve", cat: "Middle", exp: "Expires end of year" } } }
+        ];
+
+        const defaultEmployees = [
+            // Guatemala Team
+            { id: "emp_1", name: "Andrea Mansilla", email: "andrea@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_2", name: "Daniel E. Hernandez Soto", email: "daniel.hernandez@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_3", name: "Jonathan Mejia", email: "jonathan@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_4", name: "Brian Lopez", email: "brian@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_5", name: "Marvin Sandoval", email: "marvin.sandoval@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_6", name: "Armando Valenzuela", email: "armando@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_7", name: "Cristopher Orellana", email: "cristopher@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_8", name: "Diana Solis", email: "diana@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_9", name: "Jorge Garrido", email: "jorge@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_10", name: "Karen Medinilla", email: "karen@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_11", name: "Kevin Lopez", email: "kevin.lopez@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_12", name: "Diego Gonzalez", email: "diego.gonzalez@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
+            { id: "emp_13", name: "Emely Hernandez", email: "emely@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Armando Valenzuela" },
+            { id: "emp_14", name: "Pablo Saquilmer", email: "pablo@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Karen Medinilla" },
+            { id: "emp_15", name: "Ana Lucia Herrera", email: "lucia.herrera@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Karen Medinilla" },
+            { id: "emp_16", name: "Emilia Mishel Chajon Perez", email: "emilia.perez@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Karen Medinilla" },
+            { id: "emp_17", name: "Jorge David Corado Saban", email: "jorge.saban@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Karen Medinilla" },
+            { id: "emp_18", name: "Diana Abigail Orozco Alvarez", email: "diana.alvarez@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Armando Valenzuela" },
+            { id: "emp_19", name: "Rudy Herrera", email: "rudy@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Armando Valenzuela" },
+            { id: "emp_20", name: "Jose Arriaga", email: "jose.arriaga@gohighway.com", team: "IntraCanadian", branch: "GUA", supervisor: "Armando Valenzuela" },
+            { id: "emp_21", name: "Manuel Juarez", email: "manny@gohighway.com", team: "IntraCanadian", branch: "GUA", supervisor: "Armando Valenzuela" },
+            { id: "emp_22", name: "Sergio David Chigüil Reyes", email: "sergio.reyes@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Diego Gonzalez" },
+            { id: "emp_23", name: "Edgar Enrique Castillo Linares", email: "edgar.linares@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_24", name: "Brandon Vasquez", email: "brandon@gohighway.com", team: "ELD - Cases", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_25", name: "Samantha Chinchilla", email: "ericka.grijalva@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_26", name: "Celina Esmeralda Franco Ramirez", email: "celina.ramirez@gohighway.com", team: "ELD - Cases", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_27", name: "Froy Cesar Oswaldo Gonzalez Davila", email: "froy.davila@gohighway.com", team: "ELD - Cases", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_28", name: "Luis Gonzalez", email: "luis.gonzalez@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_29", name: "Sharon Olivares", email: "sharon.olivares@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_30", name: "Esvin Gomez", email: "esvin.gomez@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Diego Gonzalez" },
+            { id: "emp_31", name: "Iverth Anthony Monterroso", email: "iverth@gohighway.com", team: "ELD - Cases", branch: "GUA", supervisor: "Diego Gonzalez" },
+            { id: "emp_32", name: "Kevin Josue Martinez Acabal", email: "kevin.acabal@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Diego Gonzalez" },
+            { id: "emp_33", name: "Melanie Annelisse Garcia Marin", email: "melanie.marin@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_34", name: "Josue Sucuc", email: "josue.sucuc@gohighway.com", team: "ELD - Cases", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_35", name: "Sebastian Quinonez", email: "marcelo@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_36", name: "Luis Ajche", email: "luis.ajche@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_37", name: "Jorge Marco Geovani Najera Barillas", email: "jorge.barillas@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
+            { id: "emp_38", name: "Otto de la Cruz", email: "otto@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Andrea Mansilla" },
+            { id: "emp_39", name: "Manfredo Monterroso", email: "manfredo@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Andrea Mansilla" },
+            { id: "emp_40", name: "Eunice Sir", email: "abigail@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Andrea Mansilla" },
+            { id: "emp_41", name: "Gustavo Lopez", email: "gustavo@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Andrea Mansilla" },
+            { id: "emp_42", name: "Ana Maria Melendez", email: "ana@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Kevin Lopez" },
+            { id: "emp_43", name: "Monica Lopez", email: "monica.prado@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Kevin Lopez" },
+            { id: "emp_44", name: "Kener Lee", email: "kener@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Andrea Mansilla" },
+            { id: "emp_45", name: "Ariel Antonio Yaegui Mazate", email: "ariel.mazate@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Andrea Mansilla" },
+            { id: "emp_46", name: "Acsa Marroquin", email: "acsa.esquivel@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Andrea Mansilla" },
+            { id: "emp_47", name: "Marco Ovalle", email: "marco.lopez@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Kevin Lopez" },
+            { id: "emp_48", name: "Kathering Santos", email: "kathering.santos@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Kevin Lopez" },
+            { id: "emp_49", name: "Lynda Isabel Escobedo de Leon", email: "lynda.escobedo@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Kevin Lopez" },
+            { id: "emp_50", name: "Juan Carlos Avedaño", email: "juan@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Andrea Mansilla" },
+            { id: "emp_51", name: "Cesar David Lopez Colaj", email: "cesar.colaj@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Kevin Lopez" },
+            { id: "emp_52", name: "Julio Cortez", email: "elias@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
+            { id: "emp_53", name: "Alex Margarito Tum Coyote", email: "alex.coyote@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
+            { id: "emp_54", name: "Omar Gomez", email: "ogomez@leangroup.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
+            { id: "emp_55", name: "Luis Escobar", email: "luis.escobar@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
+            { id: "emp_56", name: "Andy Pineda", email: "andy.pineda@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
+            { id: "emp_57", name: "Edgar Palomo", email: "epalomo@leangroup.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
+            { id: "emp_58", name: "Jonathan Pirir", email: "jonathan.pirir@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
+            { id: "emp_59", name: "Yossi Martinez", email: "yossi@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
+
+            // Colombia Team
+            { id: "emp_60", name: "Alejandra Manco", email: "alejandra@gohighway.com", team: "OBS - Cases", branch: "COL", supervisor: "Nury Garcia" },
+            { id: "emp_63", name: "Kevin Cadavid", email: "Kevin.durango@gohighway.com", team: "OBS - Phones", branch: "COL", supervisor: "Nury Garcia" },
+            { id: "emp_64", name: "Andrea Niño", email: "andrea.gonzalez@gohighway.com", team: "OBS - Phones", branch: "COL", supervisor: "Nury Garcia" },
+            { id: "emp_65", name: "Alexander Jaramillo Alvarado", email: "alexander.alvarado@gohighway.com", team: "OBS - Phones", branch: "COL", supervisor: "Nury Garcia" },
+            { id: "emp_66", name: "Luis León", email: "luis.montano@gohighway.com", team: "INS - Cases", branch: "COL", supervisor: "Nury Garcia" },
+            { id: "emp_67", name: "Michelle Daniela Marquez Rodriguez", email: "michelle.rodriguez@gohighway.com", team: "INS - Cases", branch: "COL", supervisor: "Nury Garcia" },
+            { id: "emp_68", name: "Nury Garcia", email: "nury@gohighway.com", team: "Management", branch: "COL", supervisor: "Nury Garcia" },
+
+            // After Hours Team
+            { id: "emp_69", name: "Jenny Jakosalem", email: "jennifer@gohighway.com", team: "CS Management", branch: "AH", supervisor: "Management" },
+            { id: "emp_70", name: "Marianne Abigail Velasco", email: "marianne@gohighway.com", team: "After Hours Operations", branch: "AH", supervisor: "Jenny Jakosalem" },
+            { id: "emp_71", name: "Mary Joy Rafols", email: "mary@gohighway.com", team: "After Hours Operations", branch: "AH", supervisor: "Jenny Jakosalem" },
+            { id: "emp_72", name: "Kyle Andrei Abad", email: "kyle.abad@gohighway.com", team: "After Hours Operations", branch: "AH", supervisor: "Jenny Jakosalem" },
+            { id: "emp_73", name: "Aaron Gozum", email: "aaron.gozum@gohighway.com", team: "After Hours Operations", branch: "AH", supervisor: "Jenny Jakosalem" },
+            { id: "emp_74", name: "Ann Jules Dayuta", email: "ann.dayuta@gohighway.com", team: "After Hours Operations", branch: "AH", supervisor: "Jenny Jakosalem" }
+        ];
+
+        let employees = JSON.parse(localStorage.getItem('fht_employees')) || defaultEmployees;
+        let savedRecords = JSON.parse(localStorage.getItem('fht_records')) || {};
+
+        function renderDashboard(data) {
+            const container = document.getElementById('agentsContainer');
+            container.innerHTML = '';
+
+            const branchCounters = {};
+
+            data.forEach((emp) => {
+                if (!branchCounters[emp.branch]) {
+                    branchCounters[emp.branch] = 0;
+                }
+                branchCounters[emp.branch]++;
+                const agentNumber = branchCounters[emp.branch];
+
+                const card = document.createElement('div');
+                card.className = "bg-white dark:bg-slate-900 border-4 border-amber-500 rounded-xl shadow-xl overflow-hidden transition-colors duration-200";
+
+                let html = `
+                    <!-- Agent Header with Counters, Save Button & Actions -->
+                    <div class="bg-amber-400 p-4 border-b-2 border-amber-600 flex flex-col lg:flex-row justify-between items-center gap-4">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                            <div>
+                                <h2 class="text-2xl font-black text-blue-950 uppercase tracking-wide inline-block">
+                                    #${agentNumber} ${emp.name}
+                                </h2>
+                                <p class="text-xs font-bold text-blue-900 uppercase">
+                                    Branch: <span class="text-amber-900 font-extrabold">${emp.branch}</span> | 
+                                    Team: ${emp.team} | 
+                                    Supervisor: ${emp.supervisor}
+                                    ${emp.email ? ` | <span class="text-blue-950 lowercase font-extrabold">${emp.email}</span>` : ''}
+                                </p>
+                            </div>
+
+                            <button onclick="saveAgentRecords('${emp.id}')" class="bg-green-700 hover:bg-green-800 text-white text-xs font-black px-3 py-2 rounded-lg uppercase shadow-md flex items-center gap-1 border-2 border-green-900 tracking-wider">
+                                💾 Save Records
+                            </button>
+                        </div>
+
+                        <!-- Floating Holiday & Vacation Counters -->
+                        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+                            <div class="bg-blue-900 text-white px-3 py-1.5 rounded border border-amber-300 text-center">
+                                <span class="block text-[9px] font-black uppercase text-amber-300">Granted</span>
+                                <span id="granted_cnt_${emp.id}" class="text-base font-black">0</span>
+                            </div>
+                            <div class="bg-[#15803d] text-[#fef08a] px-3 py-1.5 rounded border border-amber-300 text-center">
+                                <span class="block text-[9px] font-black uppercase text-white">Taken</span>
+                                <span id="taken_cnt_${emp.id}" class="text-base font-black">0</span>
+                            </div>
+                            <div class="bg-emerald-600 text-white px-3 py-1.5 rounded border border-amber-300 text-center">
+                                <span class="block text-[9px] font-black uppercase text-emerald-100">Vacations Taken</span>
+                                <span id="vacation_cnt_${emp.id}" class="text-base font-black">0</span>
+                            </div>
+
+                            <!-- EDIT & DELETE TOP, DOWNLOAD EXCEL UNDERNEATH -->
+                            <div class="flex flex-col items-center gap-1.5 ml-1">
+                                <div class="flex items-center gap-1.5 w-full">
+                                    <button onclick="editAgent('${emp.id}')" class="w-1/2 bg-blue-950 hover:bg-blue-800 text-white text-[11px] font-bold px-2 py-1.5 rounded uppercase shadow text-center">
+                                        ✏️ Edit
+                                    </button>
+                                    <button onclick="deleteAgent('${emp.id}')" class="w-1/2 bg-red-700 hover:bg-red-800 text-white text-[11px] font-bold px-2 py-1.5 rounded uppercase shadow text-center">
+                                        🗑️ Delete
+                                    </button>
+                                </div>
+                                <button onclick="downloadAgentExcel('${emp.id}')" class="w-full bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-black py-1.5 rounded uppercase shadow border border-amber-800 flex items-center justify-center gap-1">
+                                    📊 Download Excel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pure Calendar Grid Layout -->
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-amber-50/20 dark:bg-slate-950/40">
+                `;
+
+                monthsData.forEach((m) => {
+                    html += `
+                        <div class="bg-white dark:bg-slate-900 border-2 border-amber-400 rounded-lg p-3 shadow">
+                            <h3 class="text-sm font-black text-blue-950 dark:text-amber-300 uppercase border-b-2 border-amber-400 pb-1 mb-2 text-center bg-amber-200 dark:bg-slate-800 rounded">
+                                ${m.name}
+                            </h3>
+                            <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-black text-blue-950 dark:text-slate-300 mb-1 border-b dark:border-slate-800 pb-1">
+                                <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1">
+                    `;
+
+                    for (let empty = 0; empty < m.startDay; empty++) {
+                        html += `<div class="bg-slate-100 dark:bg-slate-800/40 rounded h-16 border border-slate-200 dark:border-slate-800 opacity-30"></div>`;
+                    }
+
+                    for (let day = 1; day <= m.days; day++) {
+                        const isHoliday = m.holidays[day];
+                        const uniqueId = `${emp.id}_${m.name}_d${day}`;
+                        const savedDayData = savedRecords[uniqueId] || {};
+
+                        if (isHoliday) {
+                            html += `
+                                <div class="border rounded p-1 flex flex-col justify-between text-left h-24 text-[9px] relative bg-amber-100/90 dark:bg-amber-950/30 border-amber-500">
+                                    <div class="flex justify-between items-center font-black">
+                                        <span class="text-blue-950 dark:text-amber-200">${day}</span>
+                                        <span class="bg-amber-500 text-[7px] px-0.5 rounded uppercase font-extrabold text-blue-950" title="${isHoliday.name}">${isHoliday.name.substring(0,6)}..</span>
+                                    </div>
+
+                                    <select id="status_${uniqueId}" onchange="handleHolidayChange('${uniqueId}', '${emp.id}', '${m.name}', ${day})" class="p-0.5 rounded border border-amber-500 font-bold text-[8px] focus:outline-none w-full mt-0.5 dark:bg-slate-800 dark:text-slate-100">
+                                        <option value="">--</option>
+                                        <option value="attended" class="status-attended" ${savedDayData.status === 'attended' ? 'selected' : ''}>Attended</option>
+                                        <option value="scheduled" class="status-scheduled" ${savedDayData.status === 'scheduled' ? 'selected' : ''}>Sch Off</option>
+                                        <option value="not-attended" class="status-not-attended" ${savedDayData.status === 'not-attended' ? 'selected' : ''}>No Att</option>
+                                        <option value="expired" class="status-expired" ${savedDayData.status === 'expired' ? 'selected' : ''}>Expired</option>
+                                        <option value="vacation" class="status-vacation" ${savedDayData.status === 'vacation' ? 'selected' : ''}>Vacation</option>
+                                    </select>
+
+                                    <select id="taken_${uniqueId}" onchange="checkEmailState('${uniqueId}', '${emp.id}', '${m.name}', ${day})" disabled class="p-0.5 rounded border border-amber-500 font-bold text-[8px] focus:outline-none w-full bg-slate-100 dark:bg-slate-800 text-slate-400 mt-0.5">
+                                        <option value="none">--</option>
+                                    </select>
+
+                                    <input type="date" id="date_${uniqueId}" value="${savedDayData.date || ''}" onchange="checkEmailState('${uniqueId}', '${emp.id}', '${m.name}', ${day})" disabled class="p-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[8px] text-slate-400 focus:outline-none w-full mt-0.5">
+
+                                    <div id="email_btn_container_${uniqueId}" class="mt-0.5"></div>
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div class="border rounded p-1 flex flex-col justify-between text-left h-14 text-[9px] relative bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800">
+                                    <div class="font-black text-blue-950 dark:text-slate-200">${day}</div>
+
+                                    <select id="status_${uniqueId}" onchange="handleRegularDayChange('${uniqueId}', '${emp.id}')" class="p-0.5 rounded border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 font-bold text-[8px] focus:outline-none w-full ${savedDayData.status === 'vacation' ? 'status-vacation' : ''}">
+                                        <option value="">--</option>
+                                        <option value="vacation" class="status-vacation" ${savedDayData.status === 'vacation' ? 'selected' : ''}>Vacation</option>
+                                    </select>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+                card.innerHTML = html;
+                container.appendChild(card);
+
+                monthsData.forEach((m) => {
+                    for (let day = 1; day <= m.days; day++) {
+                        const uniqueId = `${emp.id}_${m.name}_d${day}`;
+                        if (m.holidays[day]) {
+                            handleHolidayChange(uniqueId, emp.id, m.name, day, true);
+                            const takenSelect = document.getElementById(`taken_${uniqueId}`);
+                            if (takenSelect && savedRecords[uniqueId]?.taken) {
+                                takenSelect.value = savedRecords[uniqueId].taken;
+                            }
+                            checkEmailState(uniqueId, emp.id, m.name, day);
+                        }
+                    }
+                });
+            });
+        }
+
+        function handleHolidayChange(id, empId, monthName, day, isInit = false) {
+            const statusSelect = document.getElementById(`status_${id}`);
+            const takenSelect = document.getElementById(`taken_${id}`);
+            const dateInput = document.getElementById(`date_${id}`);
+            if (!statusSelect) return;
+
+            const val = statusSelect.value;
+            statusSelect.classList.remove('status-attended', 'status-scheduled', 'status-not-attended', 'status-expired', 'status-vacation');
+
+            if (val === 'attended') {
+                statusSelect.classList.add('status-attended');
+                takenSelect.disabled = false;
+                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[8px] focus:outline-none w-full taken-active dark:bg-slate-800";
+                takenSelect.innerHTML = `
+                    <option value="not-taken">Not Taken</option>
+                    <option value="taken">Taken</option>
+                `;
+                dateInput.disabled = false;
+                dateInput.className = "p-1 rounded bg-amber-100 dark:bg-slate-800 border border-amber-500 font-bold text-[8px] text-blue-950 dark:text-slate-100 focus:outline-none w-full";
+            } else if (val === 'scheduled' || val === 'not-attended') {
+                if (val === 'scheduled') statusSelect.classList.add('status-scheduled');
+                if (val === 'not-attended') statusSelect.classList.add('status-not-attended');
+
+                takenSelect.disabled = true;
+                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[8px] focus:outline-none w-full not-granted-active";
+                takenSelect.innerHTML = `<option value="not-granted">Not Granted</option>`;
+
+                dateInput.disabled = true;
+                dateInput.value = "";
+                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[8px] text-slate-400 focus:outline-none w-full";
+            } else if (val === 'expired') {
+                statusSelect.classList.add('status-expired');
+                takenSelect.disabled = true;
+                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[8px] focus:outline-none w-full expired-active";
+                takenSelect.innerHTML = `<option value="expired">Expired</option>`;
+
+                dateInput.disabled = true;
+                dateInput.value = "";
+                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[8px] text-slate-400 focus:outline-none w-full";
+            } else if (val === 'vacation') {
+                statusSelect.classList.add('status-vacation');
+                takenSelect.disabled = true;
+                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[8px] focus:outline-none w-full vacation-active";
+                takenSelect.innerHTML = `<option value="vacation">Vacation</option>`;
+
+                dateInput.disabled = true;
+                dateInput.value = "";
+                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[8px] text-slate-400 focus:outline-none w-full";
+            } else {
+                takenSelect.disabled = true;
+                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[8px] focus:outline-none w-full bg-slate-100 dark:bg-slate-800 text-slate-400";
+                takenSelect.innerHTML = `<option value="none">--</option>`;
+
+                dateInput.disabled = true;
+                dateInput.value = "";
+                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[8px] text-slate-400 focus:outline-none w-full";
+            }
+
+            if (!isInit) checkEmailState(id, empId, monthName, day);
+            updateAgentCounters(empId);
+        }
+
+        function handleRegularDayChange(id, empId) {
+            const statusSelect = document.getElementById(`status_${id}`);
+            statusSelect.classList.remove('status-vacation');
+            if (statusSelect.value === 'vacation') {
+                statusSelect.classList.add('status-vacation');
+            }
+            updateAgentCounters(empId);
+        }
+
+        function checkEmailState(id, empId, monthName, day) {
+            const statusSelect = document.getElementById(`status_${id}`);
+            const takenSelect = document.getElementById(`taken_${id}`);
+            const dateInput = document.getElementById(`date_${id}`);
+            const container = document.getElementById(`email_btn_container_${id}`);
+
+            if (statusSelect && takenSelect && dateInput && container) {
+                if (statusSelect.value === 'attended' && takenSelect.value === 'taken' && dateInput.value !== '') {
+                    container.innerHTML = `
+                        <div class="flex flex-col gap-0.5">
+                            <button onclick="sendGmail('${empId}', '${monthName} ${day}', '${dateInput.value}')" 
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-0.5 px-0.5 rounded text-[7px] uppercase tracking-wider shadow flex items-center justify-center gap-0.5">
+                                ✉️ Send via Gmail
+                            </button>
+                            <button onclick="sendConfirmationEmail('${empId}', '${monthName} ${day}', '${dateInput.value}')" 
+                                    class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-0.5 px-0.5 rounded text-[6.5px] uppercase tracking-wider shadow flex items-center justify-center">
+                                📧 Default Client
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '';
+                }
+            }
+            updateAgentCounters(empId);
+        }
+
+        function saveAgentRecords(empId) {
+            monthsData.forEach((m) => {
+                for (let day = 1; day <= m.days; day++) {
+                    const uniqueId = `${empId}_${m.name}_d${day}`;
+                    const statusEl = document.getElementById(`status_${uniqueId}`);
+                    const takenEl = document.getElementById(`taken_${uniqueId}`);
+                    const dateEl = document.getElementById(`date_${uniqueId}`);
+
+                    if (statusEl) {
+                        savedRecords[uniqueId] = {
+                            status: statusEl.value,
+                            taken: angularTakenValue(takenEl),
+                            date: dateEl ? dateEl.value : ''
+                        };
+                    }
+                }
+            });
+
+            localStorage.setItem('fht_records', JSON.stringify(savedRecords));
+            alert("✅ Records successfully saved! They will persist even if you refresh the browser.");
+        }
+
+        function angularTakenValue(takenEl) {
+            return takenEl ? takenEl.value : '';
+        }
+
+        function downloadAgentExcel(empId) {
+            const emp = employees.find(e => e.id === empId);
+            if (!emp) return;
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += `Agent Name,${emp.name}\n`;
+            csvContent += `Branch,${emp.branch}\n`;
+            csvContent += `Team,${emp.team}\n`;
+            csvContent += `Supervisor,${emp.supervisor}\n\n`;
+
+            csvContent += "Type,Month,Day,Holiday Name,Attendance Status,Taken Status,Date Taken / Vacation Date\n";
+
+            monthsData.forEach((m) => {
+                for (let day = 1; day <= m.days; day++) {
+                    const uniqueId = `${empId}_${m.name}_d${day}`;
+                    const isHoliday = m.holidays[day];
+                    const statusSelect = document.getElementById(`status_${uniqueId}`);
+                    const takenSelect = document.getElementById(`taken_${uniqueId}`);
+                    const dateInput = document.getElementById(`date_${uniqueId}`);
+
+                    const statusVal = statusSelect ? statusSelect.value : '';
+                    const takenVal = takenSelect ? takenSelect.value : '';
+                    const dateVal = dateInput ? dateInput.value : '';
+
+                    if (isHoliday) {
+                        if (statusVal !== '') {
+                            csvContent += `Floating Holiday,${m.name},${day},"${isHoliday.name}",${statusVal},${takenVal},${dateVal}\n`;
+                        }
+                    } else {
+                        if (statusVal === 'vacation') {
+                            csvContent += `Vacation,${m.name},${day},N/A,Vacation,N/A,${m.name} ${day}\n`;
+                        }
+                    }
+                }
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `${emp.name.replace(/\s+/g, '_')}_Holiday_Records.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function sendGmail(empId, grantedDate, dateTaken) {
+            const emp = employees.find(e => e.id === empId);
+            const email = emp ? emp.email : "";
+
+            const subject = encodeURIComponent(`Floating Holiday Confirmation - ${emp ? emp.name : ''}`);
+            const body = encodeURIComponent(
+                `Hello ${emp ? emp.name : ''},\n\n` +
+                `This email confirms that your Floating Holiday earned on ${grantedDate} has been registered as TAKEN on ${dateTaken}.\n\n` +
+                `Details:\n` +
+                `- Agent: ${emp ? emp.name : ''}\n` +
+                `- Branch: ${emp ? emp.branch : ''}\n` +
+                `- Holiday Granted Date: ${grantedDate}\n` +
+                `- Date Taken: ${dateTaken}\n\n` +
+                `Thank you,\n` +
+                `Operations Management`
+            );
+
+            const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}&body=${body}`;
+            window.open(gmailUrl, '_blank');
+        }
+
+        function sendConfirmationEmail(empId, grantedDate, dateTaken) {
+            const emp = employees.find(e => e.id === empId);
+            const email = emp ? emp.email : "";
+
+            const subject = encodeURIComponent(`Floating Holiday Confirmation - ${emp ? emp.name : ''}`);
+            const body = encodeURIComponent(
+                `Hello ${emp ? emp.name : ''},\n\n` +
+                `This email confirms that your Floating Holiday earned on ${grantedDate} has been registered as TAKEN on ${dateTaken}.\n\n` +
+                `Details:\n` +
+                `- Agent: ${emp ? emp.name : ''}\n` +
+                `- Branch: ${emp ? emp.branch : ''}\n` +
+                `- Holiday Granted Date: ${grantedDate}\n` +
+                `- Date Taken: ${dateTaken}\n\n` +
+                `Thank you,\n` +
+                `Operations Management`
+            );
+
+            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        }
+
+        function updateAgentCounters(empId) {
+            let grantedCount = 0;
+            let takenCount = 0;
+            let vacationCount = 0;
+
+            monthsData.forEach((m) => {
+                for (let day = 1; day <= m.days; day++) {
+                    const uniqueId = `${empId}_${m.name}_d${day}`;
+                    const statusSelect = document.getElementById(`status_${uniqueId}`);
+                    const takenSelect = document.getElementById(`taken_${uniqueId}`);
+
+                    if (statusSelect) {
+                        if (statusSelect.value === 'attended') {
+                            grantedCount++;
+                            if (takenSelect && takenSelect.value === 'taken') {
+                                takenCount++;
+                            }
+                        } else if (statusSelect.value === 'vacation') {
+                            vacationCount++;
+                        }
+                    }
+                }
+            });
+
+            const grantedEl = document.getElementById(`granted_cnt_${empId}`);
+            const takenEl = document.getElementById(`taken_cnt_${empId}`);
+            const vacationEl = document.getElementById(`vacation_cnt_${empId}`);
+
+            if (grantedEl) grantedEl.innerText = grantedCount;
+            if (takenEl) takenEl.innerText = takenCount;
+            if (vacationEl) vacationEl.innerText = vacationCount;
+        }
+
+        function applyFilters() {
+            const branchVal = document.getElementById('branchFilter').value;
+            const searchVal = document.getElementById('searchFilter').value.toLowerCase();
+
+            const filtered = employees.filter(emp => {
+                const matchBranch = (emp.branch === branchVal);
+                const matchSearch = emp.name.toLowerCase().includes(searchVal);
+                return matchBranch && matchSearch;
+            });
+
+            renderDashboard(filtered);
+        }
+
+        function editAgent(empId) {
+            const emp = employees.find(e => e.id === empId);
+            if (!emp) return;
+
+            document.getElementById('modalTitle').innerText = "Edit Agent Information";
+            document.getElementById('editAgentIndex').value = empId;
+            document.getElementById('modalName').value = emp.name;
+            document.getElementById('modalEmail').value = emp.email || "";
+            document.getElementById('modalBranch').value = emp.branch;
+            document.getElementById('modalTeam').value = emp.team;
+            document.getElementById('modalSupervisor').value = emp.supervisor;
+            document.getElementById('agentModal').classList.remove('hidden');
+            document.getElementById('agentModal').classList.add('flex');
+        }
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = "Add New Agent";
+            document.getElementById('editAgentIndex').value = "-1";
+            document.getElementById('modalName').value = "";
+            document.getElementById('modalEmail').value = "";
+            document.getElementById('modalBranch').value = "GUA";
+            document.getElementById('modalTeam').value = "";
+            document.getElementById('modalSupervisor').value = "";
+            document.getElementById('agentModal').classList.remove('hidden');
+            document.getElementById('agentModal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('agentModal').classList.add('hidden');
+            document.getElementById('agentModal').classList.remove('flex');
+        }
+
+        function saveAgent() {
+            const empId = document.getElementById('editAgentIndex').value;
+            const name = document.getElementById('modalName').value.trim();
+            const email = document.getElementById('modalEmail').value.trim();
+            const branch = document.getElementById('modalBranch').value;
+            const team = document.getElementById('modalTeam').value.trim();
+            const supervisor = document.getElementById('modalSupervisor').value.trim();
+
+            if (!name) return alert("Agent name is required.");
+
+            if (empId === "-1") {
+                const newId = `emp_${Date.now()}`;
+                employees.push({ id: newId, name, email, branch, team, supervisor });
+            } else {
+                const idx = employees.findIndex(e => e.id === empId);
+                if (idx !== -1) {
+                    employees[idx] = { id: empId, name, email, branch, team, supervisor };
+                }
+            }
+
+            localStorage.setItem('fht_employees', JSON.stringify(employees));
+            closeModal();
+            applyFilters();
+        }
+
+        function deleteAgent(empId) {
+            const emp = employees.find(e => e.id === empId);
+            if (emp && confirm(`Are you sure you want to delete ${emp.name}?`)) {
+                employees = employees.filter(e => e.id !== empId);
+                localStorage.setItem('fht_employees', JSON.stringify(employees));
+                applyFilters();
+            }
+        }
+
+        // LÓGICA COMPACTA DE CAMBIO Y PERSISTENCIA DE TEMA (SOLO ÍCONO)
+        function toggleDarkMode() {
+            const htmlEl = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+
+            if (htmlEl.classList.contains('dark')) {
+                htmlEl.classList.remove('dark');
+                themeIcon.innerText = '🌙';
+                localStorage.setItem('fht_theme', 'light');
+            } else {
+                htmlEl.classList.add('dark');
+                themeIcon.innerText = '☀️';
+                localStorage.setItem('fht_theme', 'dark');
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('fht_theme') || 'dark';
+            const htmlEl = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+
+            if (savedTheme === 'dark') {
+                htmlEl.classList.add('dark');
+                if (themeIcon) themeIcon.innerText = '☀️';
+            } else {
+                htmlEl.classList.remove('dark');
+                if (themeIcon) themeIcon.innerText = '🌙';
+            }
+        }
+
+        window.onload = () => {
+            initTheme();
+            applyFilters();
+        };
+    </script>
+</body>
+</html>
