@@ -22,6 +22,11 @@
         }
     </script>
     <style>
+        /* Margen horizontal izquierdo ajustado a 5 mm antes del botón flotante */
+        body {
+            padding-left: 67px !important;
+        }
+
         /* Base Gridlines & Table Borders in Amber */
         table, th, td {
             border: 1.5px solid #f59e0b !important;
@@ -340,24 +345,24 @@
                         </div>
                     </div>
 
-                    <!-- Pure Calendar Grid Layout -->
+                    <!-- Pure Calendar Grid Layout con ZOOM AL 90% (Celdas más grandes y legibles) -->
                     <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-amber-50/20 dark:bg-slate-950/40">
                 `;
 
                 monthsData.forEach((m) => {
                     html += `
                         <div class="bg-white dark:bg-slate-900 border-2 border-amber-400 rounded-lg p-3 shadow">
-                            <h3 class="text-sm font-black text-blue-950 dark:text-amber-300 uppercase border-b-2 border-amber-400 pb-1 mb-2 text-center bg-amber-200 dark:bg-slate-800 rounded">
+                            <h3 class="text-base font-black text-blue-950 dark:text-amber-300 uppercase border-b-2 border-amber-400 pb-1 mb-2 text-center bg-amber-200 dark:bg-slate-800 rounded">
                                 ${m.name}
                             </h3>
-                            <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-black text-blue-950 dark:text-slate-300 mb-1 border-b dark:border-slate-800 pb-1">
+                            <div class="grid grid-cols-7 gap-1 text-center text-xs font-black text-blue-950 dark:text-slate-300 mb-1 border-b dark:border-slate-800 pb-1">
                                 <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
                             </div>
-                            <div class="grid grid-cols-7 gap-1">
+                            <div class="grid grid-cols-7 gap-1.5">
                     `;
 
                     for (let empty = 0; empty < m.startDay; empty++) {
-                        html += `<div class="bg-slate-100 dark:bg-slate-800/40 rounded h-16 border border-slate-200 dark:border-slate-800 opacity-30"></div>`;
+                        html += `<div class="bg-slate-100 dark:bg-slate-800/40 rounded h-24 border border-slate-200 dark:border-slate-800 opacity-30"></div>`;
                     }
 
                     for (let day = 1; day <= m.days; day++) {
@@ -367,13 +372,13 @@
 
                         if (isHoliday) {
                             html += `
-                                <div class="border rounded p-1 flex flex-col justify-between text-left h-24 text-[9px] relative bg-amber-100/90 dark:bg-amber-950/30 border-amber-500">
+                                <div class="border rounded p-1.5 flex flex-col justify-between text-left h-28 text-xs relative bg-amber-100/90 dark:bg-amber-950/30 border-amber-500">
                                     <div class="flex justify-between items-center font-black">
-                                        <span class="text-blue-950 dark:text-amber-200">${day}</span>
-                                        <span class="bg-amber-500 text-[7px] px-0.5 rounded uppercase font-extrabold text-blue-950" title="${isHoliday.name}">${isHoliday.name.substring(0,6)}..</span>
+                                        <span class="text-blue-950 dark:text-amber-200 text-sm">${day}</span>
+                                        <span class="bg-amber-500 text-[9px] px-1 rounded uppercase font-extrabold text-blue-950" title="${isHoliday.name}">${isHoliday.name.substring(0,6)}..</span>
                                     </div>
 
-                                    <select id="status_${uniqueId}" onchange="handleHolidayChange('${uniqueId}', '${emp.id}', '${m.name}', ${day})" class="p-0.5 rounded border border-amber-500 font-bold text-[8px] focus:outline-none w-full mt-0.5 dark:bg-slate-800 dark:text-slate-100">
+                                    <select id="status_${uniqueId}" onchange="handleHolidayChange('${uniqueId}', '${emp.id}', '${m.name}', ${day})" class="p-0.5 rounded border border-amber-500 font-bold text-[10px] focus:outline-none w-full mt-0.5 dark:bg-slate-800 dark:text-slate-100">
                                         <option value="">--</option>
                                         <option value="attended" class="status-attended" ${savedDayData.status === 'attended' ? 'selected' : ''}>Attended</option>
                                         <option value="scheduled" class="status-scheduled" ${savedDayData.status === 'scheduled' ? 'selected' : ''}>Sch Off</option>
@@ -382,21 +387,21 @@
                                         <option value="vacation" class="status-vacation" ${savedDayData.status === 'vacation' ? 'selected' : ''}>Vacation</option>
                                     </select>
 
-                                    <select id="taken_${uniqueId}" onchange="checkEmailState('${uniqueId}', '${emp.id}', '${m.name}', ${day})" disabled class="p-0.5 rounded border border-amber-500 font-bold text-[8px] focus:outline-none w-full bg-slate-100 dark:bg-slate-800 text-slate-400 mt-0.5">
+                                    <select id="taken_${uniqueId}" onchange="checkEmailState('${uniqueId}', '${emp.id}', '${m.name}', ${day})" disabled class="p-0.5 rounded border border-amber-500 font-bold text-[10px] focus:outline-none w-full bg-slate-100 dark:bg-slate-800 text-slate-400 mt-0.5">
                                         <option value="none">--</option>
                                     </select>
 
-                                    <input type="date" id="date_${uniqueId}" value="${savedDayData.date || ''}" onchange="checkEmailState('${uniqueId}', '${emp.id}', '${m.name}', ${day})" disabled class="p-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[8px] text-slate-400 focus:outline-none w-full mt-0.5">
+                                    <input type="date" id="date_${uniqueId}" value="${savedDayData.date || ''}" onchange="checkEmailState('${uniqueId}', '${emp.id}', '${m.name}', ${day})" disabled class="p-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[9px] text-slate-400 focus:outline-none w-full mt-0.5">
 
                                     <div id="email_btn_container_${uniqueId}" class="mt-0.5"></div>
                                 </div>
                             `;
                         } else {
                             html += `
-                                <div class="border rounded p-1 flex flex-col justify-between text-left h-14 text-[9px] relative bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800">
-                                    <div class="font-black text-blue-950 dark:text-slate-200">${day}</div>
+                                <div class="border rounded p-1.5 flex flex-col justify-between text-left h-20 text-xs relative bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800">
+                                    <div class="font-black text-blue-950 dark:text-slate-200 text-sm">${day}</div>
 
-                                    <select id="status_${uniqueId}" onchange="handleRegularDayChange('${uniqueId}', '${emp.id}')" class="p-0.5 rounded border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 font-bold text-[8px] focus:outline-none w-full ${savedDayData.status === 'vacation' ? 'status-vacation' : ''}">
+                                    <select id="status_${uniqueId}" onchange="handleRegularDayChange('${uniqueId}', '${emp.id}')" class="p-0.5 rounded border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 font-bold text-[10px] focus:outline-none w-full ${savedDayData.status === 'vacation' ? 'status-vacation' : ''}">
                                         <option value="">--</option>
                                         <option value="vacation" class="status-vacation" ${savedDayData.status === 'vacation' ? 'selected' : ''}>Vacation</option>
                                     </select>
@@ -443,50 +448,50 @@
             if (val === 'attended') {
                 statusSelect.classList.add('status-attended');
                 takenSelect.disabled = false;
-                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[8px] focus:outline-none w-full taken-active dark:bg-slate-800";
+                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[10px] focus:outline-none w-full taken-active dark:bg-slate-800";
                 takenSelect.innerHTML = `
                     <option value="not-taken">Not Taken</option>
                     <option value="taken">Taken</option>
                 `;
                 dateInput.disabled = false;
-                dateInput.className = "p-1 rounded bg-amber-100 dark:bg-slate-800 border border-amber-500 font-bold text-[8px] text-blue-950 dark:text-slate-100 focus:outline-none w-full";
+                dateInput.className = "p-1 rounded bg-amber-100 dark:bg-slate-800 border border-amber-500 font-bold text-[9px] text-blue-950 dark:text-slate-100 focus:outline-none w-full";
             } else if (val === 'scheduled' || val === 'not-attended') {
                 if (val === 'scheduled') statusSelect.classList.add('status-scheduled');
                 if (val === 'not-attended') statusSelect.classList.add('status-not-attended');
 
                 takenSelect.disabled = true;
-                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[8px] focus:outline-none w-full not-granted-active";
+                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[10px] focus:outline-none w-full not-granted-active";
                 takenSelect.innerHTML = `<option value="not-granted">Not Granted</option>`;
 
                 dateInput.disabled = true;
                 dateInput.value = "";
-                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[8px] text-slate-400 focus:outline-none w-full";
+                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[9px] text-slate-400 focus:outline-none w-full";
             } else if (val === 'expired') {
                 statusSelect.classList.add('status-expired');
                 takenSelect.disabled = true;
-                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[8px] focus:outline-none w-full expired-active";
+                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[10px] focus:outline-none w-full expired-active";
                 takenSelect.innerHTML = `<option value="expired">Expired</option>`;
 
                 dateInput.disabled = true;
                 dateInput.value = "";
-                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[8px] text-slate-400 focus:outline-none w-full";
+                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[9px] text-slate-400 focus:outline-none w-full";
             } else if (val === 'vacation') {
                 statusSelect.classList.add('status-vacation');
                 takenSelect.disabled = true;
-                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[8px] focus:outline-none w-full vacation-active";
+                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[10px] focus:outline-none w-full vacation-active";
                 takenSelect.innerHTML = `<option value="vacation">Vacation</option>`;
 
                 dateInput.disabled = true;
                 dateInput.value = "";
-                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[8px] text-slate-400 focus:outline-none w-full";
+                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[9px] text-slate-400 focus:outline-none w-full";
             } else {
                 takenSelect.disabled = true;
-                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[8px] focus:outline-none w-full bg-slate-100 dark:bg-slate-800 text-slate-400";
+                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[10px] focus:outline-none w-full bg-slate-100 dark:bg-slate-800 text-slate-400";
                 takenSelect.innerHTML = `<option value="none">--</option>`;
 
                 dateInput.disabled = true;
                 dateInput.value = "";
-                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[8px] text-slate-400 focus:outline-none w-full";
+                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[9px] text-slate-400 focus:outline-none w-full";
             }
 
             if (!isInit) checkEmailState(id, empId, monthName, day);
@@ -513,11 +518,11 @@
                     container.innerHTML = `
                         <div class="flex flex-col gap-0.5">
                             <button onclick="sendGmail('${empId}', '${monthName} ${day}', '${dateInput.value}')" 
-                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-0.5 px-0.5 rounded text-[7px] uppercase tracking-wider shadow flex items-center justify-center gap-0.5">
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-0.5 px-0.5 rounded text-[8px] uppercase tracking-wider shadow flex items-center justify-center gap-0.5">
                                 ✉️ Send via Gmail
                             </button>
                             <button onclick="sendConfirmationEmail('${empId}', '${monthName} ${day}', '${dateInput.value}')" 
-                                    class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-0.5 px-0.5 rounded text-[6.5px] uppercase tracking-wider shadow flex items-center justify-center">
+                                    class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-0.5 px-0.5 rounded text-[7.5px] uppercase tracking-wider shadow flex items-center justify-center">
                                 📧 Default Client
                             </button>
                         </div>
