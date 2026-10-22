@@ -116,7 +116,7 @@
 
             <!-- Add Agent Action Button -->
             <div class="w-full md:w-auto flex items-end justify-end">
-                <button onclick="openAddModal()" class="w-full md:w-auto bg-amber-400 hover:bg-amber-300 text-blue-950 font-black px-5 py-2.5 rounded border-2 border-amber-600 uppercase text-xs tracking-wider shadow whitespace-nowrap">
+                <button onclick="protectedAction(openAddModal)" class="w-full md:w-auto bg-amber-400 hover:bg-amber-300 text-blue-950 font-black px-5 py-2.5 rounded border-2 border-amber-600 uppercase text-xs tracking-wider shadow whitespace-nowrap">
                     + Add New Agent
                 </button>
             </div>
@@ -134,6 +134,27 @@
         <button onclick="toggleDarkMode()" class="bg-amber-500 hover:bg-amber-400 text-blue-950 p-2 rounded-full border-2 border-amber-700 shadow-2xl transition-transform active:scale-90 flex items-center justify-center w-9 h-9 text-base" title="Toggle Light/Dark Mode">
             <span id="themeIcon">🌙</span>
         </button>
+    </div>
+
+    <!-- Password Auth Pop-up Modal -->
+    <div id="passwordAuthModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-slate-900 border-4 border-amber-500 rounded-xl p-6 w-full max-w-sm shadow-2xl text-slate-900 dark:text-slate-100">
+            <h3 class="text-xl font-black text-blue-950 dark:text-amber-400 uppercase mb-2 text-center">Authentication Required</h3>
+            <p class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-4 text-center">Please enter the management password to proceed.</p>
+            
+            <div class="space-y-4 text-xs font-bold">
+                <div>
+                    <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Management Password:</label>
+                    <input type="password" id="authPasswordInput" placeholder="Password..." class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                    <p id="authErrorMessage" class="text-red-600 dark:text-red-400 text-[11px] font-bold mt-1.5 hidden">Incorrect password. Access denied.</p>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="closePasswordModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded font-bold uppercase text-xs">Cancel</button>
+                <button onclick="submitPasswordAuth()" class="px-4 py-2 bg-amber-500 text-blue-950 font-black rounded uppercase text-xs hover:bg-amber-400">Confirm</button>
+            </div>
+        </div>
     </div>
 
     <!-- Modal for Edit / Add Agent -->
@@ -178,6 +199,9 @@
 
     <!-- JavaScript Data & Logic -->
     <script>
+        const AUTH_PASSWORD = "management2026!";
+        let pendingActionCallback = null;
+
         const monthsData = [
             { name: "January", days: 31, startDay: 4, holidays: { 1: { name: "New Years Day", cat: "Major", exp: "Expires end of year" }, 19: { name: "MLK Day", cat: "Minor", exp: "Exp: Apr 19" } } },
             { name: "February", days: 28, startDay: 0, holidays: { 16: { name: "Presidents Day", cat: "Minor", exp: "Exp: May 16" } } },
@@ -276,6 +300,39 @@
         let employees = JSON.parse(localStorage.getItem('fht_employees')) || defaultEmployees;
         let savedRecords = JSON.parse(localStorage.getItem('fht_records')) || {};
 
+        /* --- AUTHENTICATION MODAL LOGIC --- */
+        function protectedAction(callbackAction) {
+            pendingActionCallback = callbackAction;
+            document.getElementById('authPasswordInput').value = '';
+            document.getElementById('authErrorMessage').classList.add('hidden');
+            const modal = document.getElementById('passwordAuthModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('authPasswordInput').focus();
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('passwordAuthModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            pendingActionCallback = null;
+        }
+
+        function submitPasswordAuth() {
+            const passwordEntered = document.getElementById('authPasswordInput').value;
+            if (passwordEntered === AUTH_PASSWORD) {
+                const actionToExecute = pendingActionCallback;
+                closePasswordModal();
+                if (actionToExecute) actionToExecute();
+            } else {
+                document.getElementById('authErrorMessage').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('authPasswordInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') submitPasswordAuth();
+        });
+
         function renderDashboard(data) {
             const container = document.getElementById('agentsContainer');
             container.innerHTML = '';
@@ -336,10 +393,10 @@
                             <!-- EDIT & DELETE TOP, DOWNLOAD EXCEL UNDERNEATH -->
                             <div class="flex flex-col items-center gap-1.5 ml-1">
                                 <div class="flex items-center gap-1.5 w-full">
-                                    <button onclick="editAgent('${emp.id}')" class="w-1/2 bg-blue-950 hover:bg-blue-800 text-white text-[11px] font-bold px-2 py-1.5 rounded uppercase shadow text-center">
+                                    <button onclick="protectedAction(() => editAgent('${emp.id}'))" class="w-1/2 bg-blue-950 hover:bg-blue-800 text-white text-[11px] font-bold px-2 py-1.5 rounded uppercase shadow text-center">
                                         ✏️ Edit
                                     </button>
-                                    <button onclick="deleteAgent('${emp.id}')" class="w-1/2 bg-red-700 hover:bg-red-800 text-white text-[11px] font-bold px-2 py-1.5 rounded uppercase shadow text-center">
+                                    <button onclick="protectedAction(() => deleteAgent('${emp.id}'))" class="w-1/2 bg-red-700 hover:bg-red-800 text-white text-[11px] font-bold px-2 py-1.5 rounded uppercase shadow text-center">
                                         🗑️ Delete
                                     </button>
                                 </div>
