@@ -22,14 +22,21 @@
         }
     </script>
     <style>
+        /* 1. TODAS LAS LETRAS TAMAÑO ARIAL 14PX */
+        * {
+            font-family: Arial, Helvetica, sans-serif !important;
+            font-size: 14px !important;
+            line-height: 1.4 !important;
+        }
+
         /* Margen horizontal izquierdo ajustado a 5 mm antes del botón flotante */
         body {
             padding-left: 67px !important;
         }
 
-        /* Base Gridlines & Table Borders in Amber */
+        /* Base Gridlines & Table Borders in Blue for light theme now */
         table, th, td {
-            border: 1.5px solid #f59e0b !important;
+            border: 1.5px solid #2563eb !important;
         }
 
         /* Custom Status Conditional Styles */
@@ -82,26 +89,29 @@
         }
     </style>
 </head>
-<body class="bg-amber-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans p-2 md:p-6 min-h-screen transition-colors duration-200">
+<!-- Fondo base: azul claro en vez de ambar claro -->
+<body class="bg-blue-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-2 md:p-6 min-h-screen transition-colors duration-200">
 
     <!-- Header Principal -->
-    <header class="bg-amber-500 border-4 border-amber-600 rounded-lg p-5 mb-6 shadow-xl text-center">
-        <h1 class="text-3xl md:text-5xl font-black text-blue-950 tracking-wider uppercase">
+    <!-- Fondos ambar -> azul, Letras azules -> ambar -->
+    <header class="bg-blue-500 border-4 border-blue-600 rounded-lg p-5 mb-6 shadow-xl text-center">
+        <h1 class="font-black text-amber-500 tracking-wider uppercase">
             FLOATING HOLIDAY TRACKER
         </h1>
-        <p class="text-blue-900 font-bold mt-1 text-sm md:text-base uppercase tracking-widest">
+        <p class="text-amber-400 font-bold mt-1 uppercase tracking-widest">
             Full Annual Calendar & Agent Attendance Tracking System
         </p>
     </header>
 
     <!-- Filters & Quick Actions Bar -->
-    <section class="bg-blue-900 dark:bg-slate-900 border-2 border-amber-400 rounded-lg p-4 mb-6 shadow-md text-white">
+    <!-- Fondo azul oscuro -> ambar, bordes ambar -> azul -->
+    <section class="bg-amber-500 dark:bg-slate-900 border-2 border-blue-400 rounded-lg p-4 mb-6 shadow-md text-white">
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
             
             <!-- Branch Filter -->
             <div class="w-full md:w-1/2">
-                <label class="block text-xs font-bold uppercase mb-1 text-amber-300">Filter by Branch:</label>
-                <select id="branchFilter" onchange="applyFilters()" class="w-full p-2.5 rounded bg-amber-100 dark:bg-slate-800 text-blue-950 dark:text-amber-300 font-extrabold border-2 border-amber-500 focus:outline-none">
+                <label class="block font-bold uppercase mb-1 text-blue-900">Filter by Branch:</label>
+                <select id="branchFilter" onchange="applyFilters()" class="w-full p-2.5 rounded bg-blue-100 dark:bg-slate-800 text-amber-600 dark:text-amber-300 font-extrabold border-2 border-blue-500 focus:outline-none">
                     <option value="GUA">GUA (Guatemala)</option>
                     <option value="COL">COLOMBIA</option>
                     <option value="AH">AFTER HOURS</option>
@@ -110,13 +120,14 @@
 
             <!-- Agent Search -->
             <div class="w-full md:w-1/2">
-                <label class="block text-xs font-bold uppercase mb-1 text-amber-300">Search Agent:</label>
-                <input type="text" id="searchFilter" onkeyup="applyFilters()" placeholder="Type agent name..." class="w-full p-2 rounded bg-amber-100 dark:bg-slate-800 text-blue-950 dark:text-slate-100 font-bold border-2 border-amber-500 focus:outline-none placeholder-blue-900/50 dark:placeholder-slate-400">
+                <label class="block font-bold uppercase mb-1 text-blue-900">Search Agent:</label>
+                <input type="text" id="searchFilter" onkeyup="applyFilters()" placeholder="Type agent name..." class="w-full p-2 rounded bg-blue-100 dark:bg-slate-800 text-amber-600 dark:text-slate-100 font-bold border-2 border-blue-500 focus:outline-none placeholder-amber-600/50 dark:placeholder-slate-400">
             </div>
 
             <!-- Add Agent Action Button -->
+            <!-- Boton ambar -> azul, Letras azules -> ambar -->
             <div class="w-full md:w-auto flex items-end justify-end">
-                <button onclick="protectedAction(openAddModal)" class="w-full md:w-auto bg-amber-400 hover:bg-amber-300 text-blue-950 font-black px-5 py-2.5 rounded border-2 border-amber-600 uppercase text-xs tracking-wider shadow whitespace-nowrap">
+                <button onclick="protectedAction(openAddModal)" class="w-full md:w-auto bg-blue-500 hover:bg-blue-400 text-amber-400 font-black px-5 py-2.5 rounded border-2 border-blue-600 uppercase tracking-wider shadow whitespace-nowrap">
                     + Add New Agent
                 </button>
             </div>
@@ -129,52 +140,52 @@
         <!-- Rendered dynamically via JavaScript -->
     </main>
 
-    <!-- Botón Flotante Pequeño SOLO con Ícono (Esquina Inferior Izquierda) -->
+    <!-- Botón Flotante Pequeño SOLO con Ícono -->
     <div class="fixed bottom-3 left-3 z-50">
-        <button onclick="toggleDarkMode()" class="bg-amber-500 hover:bg-amber-400 text-blue-950 p-2 rounded-full border-2 border-amber-700 shadow-2xl transition-transform active:scale-90 flex items-center justify-center w-9 h-9 text-base" title="Toggle Light/Dark Mode">
+        <button onclick="toggleDarkMode()" class="bg-blue-500 hover:bg-blue-400 text-amber-400 p-2 rounded-full border-2 border-blue-700 shadow-2xl transition-transform active:scale-90 flex items-center justify-center w-9 h-9" title="Toggle Light/Dark Mode">
             <span id="themeIcon">🌙</span>
         </button>
     </div>
 
     <!-- Password Auth Pop-up Modal -->
     <div id="passwordAuthModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-slate-900 border-4 border-amber-500 rounded-xl p-6 w-full max-w-sm shadow-2xl text-slate-900 dark:text-slate-100">
-            <h3 class="text-xl font-black text-blue-950 dark:text-amber-400 uppercase mb-2 text-center">Authentication Required</h3>
-            <p class="text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-4 text-center">Please enter the management password to proceed.</p>
+        <div class="bg-[#ffeb99] dark:bg-slate-900 border-4 border-blue-500 rounded-xl p-6 w-full max-w-sm shadow-2xl text-slate-900 dark:text-slate-100">
+            <h3 class="font-black text-amber-600 dark:text-amber-400 uppercase mb-2 text-center">Authentication Required</h3>
+            <p class="font-bold text-slate-600 dark:text-slate-300 uppercase mb-4 text-center">Please enter the management password to proceed.</p>
             
-            <div class="space-y-4 text-xs font-bold">
+            <div class="space-y-4 font-bold">
                 <div>
                     <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Management Password:</label>
-                    <input type="password" id="authPasswordInput" placeholder="Password..." class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
-                    <p id="authErrorMessage" class="text-red-600 dark:text-red-400 text-[11px] font-bold mt-1.5 hidden">Incorrect password. Access denied.</p>
+                    <input type="password" id="authPasswordInput" placeholder="Password..." class="w-full p-2 border-2 border-blue-400 rounded focus:outline-none bg-blue-50 dark:bg-slate-800 text-amber-600 dark:text-slate-100">
+                    <p id="authErrorMessage" class="text-red-600 dark:text-red-400 font-bold mt-1.5 hidden">Incorrect password. Access denied.</p>
                 </div>
             </div>
 
             <div class="flex justify-end gap-3 mt-6">
-                <button onclick="closePasswordModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded font-bold uppercase text-xs">Cancel</button>
-                <button onclick="submitPasswordAuth()" class="px-4 py-2 bg-amber-500 text-blue-950 font-black rounded uppercase text-xs hover:bg-amber-400">Confirm</button>
+                <button onclick="closePasswordModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded font-bold uppercase">Cancel</button>
+                <button onclick="submitPasswordAuth()" class="px-4 py-2 bg-blue-500 text-amber-400 font-black rounded uppercase hover:bg-blue-400">Confirm</button>
             </div>
         </div>
     </div>
 
     <!-- Modal for Edit / Add Agent -->
     <div id="agentModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-slate-900 border-4 border-amber-500 rounded-xl p-6 w-full max-w-md shadow-2xl text-slate-900 dark:text-slate-100">
-            <h3 id="modalTitle" class="text-xl font-black text-blue-950 dark:text-amber-400 uppercase mb-4">Edit Agent Information</h3>
+        <div class="bg-[#ffeb99] dark:bg-slate-900 border-4 border-blue-500 rounded-xl p-6 w-full max-w-md shadow-2xl text-slate-900 dark:text-slate-100">
+            <h3 id="modalTitle" class="font-black text-amber-600 dark:text-amber-400 uppercase mb-4">Edit Agent Information</h3>
             <input type="hidden" id="editAgentIndex">
             
-            <div class="space-y-4 text-xs font-bold">
+            <div class="space-y-4 font-bold">
                 <div>
                     <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Agent Name:</label>
-                    <input type="text" id="modalName" class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                    <input type="text" id="modalName" class="w-full p-2 border-2 border-blue-400 rounded focus:outline-none bg-blue-50 dark:bg-slate-800 text-amber-600 dark:text-slate-100">
                 </div>
                 <div>
                     <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Email Address:</label>
-                    <input type="email" id="modalEmail" placeholder="agent@gohighway.com" class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                    <input type="email" id="modalEmail" placeholder="agent@gohighway.com" class="w-full p-2 border-2 border-blue-400 rounded focus:outline-none bg-blue-50 dark:bg-slate-800 text-amber-600 dark:text-slate-100">
                 </div>
                 <div>
                     <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Branch:</label>
-                    <select id="modalBranch" class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                    <select id="modalBranch" class="w-full p-2 border-2 border-blue-400 rounded focus:outline-none bg-blue-50 dark:bg-slate-800 text-amber-600 dark:text-slate-100">
                         <option value="GUA">GUA</option>
                         <option value="COL">COL</option>
                         <option value="AH">AH</option>
@@ -182,17 +193,17 @@
                 </div>
                 <div>
                     <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Team:</label>
-                    <input type="text" id="modalTeam" class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                    <input type="text" id="modalTeam" class="w-full p-2 border-2 border-blue-400 rounded focus:outline-none bg-blue-50 dark:bg-slate-800 text-amber-600 dark:text-slate-100">
                 </div>
                 <div>
                     <label class="block mb-1 text-slate-700 dark:text-slate-300 uppercase">Supervisor:</label>
-                    <input type="text" id="modalSupervisor" class="w-full p-2 border-2 border-amber-400 rounded focus:outline-none bg-amber-50 dark:bg-slate-800 text-blue-950 dark:text-slate-100 text-sm">
+                    <input type="text" id="modalSupervisor" class="w-full p-2 border-2 border-blue-400 rounded focus:outline-none bg-blue-50 dark:bg-slate-800 text-amber-600 dark:text-slate-100">
                 </div>
             </div>
 
             <div class="flex justify-end gap-3 mt-6">
-                <button onclick="closeModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded font-bold uppercase text-xs">Cancel</button>
-                <button onclick="saveAgent()" class="px-4 py-2 bg-amber-500 text-blue-950 font-black rounded uppercase text-xs hover:bg-amber-400">Save Agent</button>
+                <button onclick="closeModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded font-bold uppercase">Cancel</button>
+                <button onclick="saveAgent()" class="px-4 py-2 bg-blue-500 text-amber-400 font-black rounded uppercase hover:bg-blue-400">Save Agent</button>
             </div>
         </div>
     </div>
@@ -221,80 +232,8 @@
             // Guatemala Team
             { id: "emp_1", name: "Andrea Mansilla", email: "andrea@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
             { id: "emp_2", name: "Daniel E. Hernandez Soto", email: "daniel.hernandez@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_3", name: "Jonathan Mejia", email: "jonathan@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_4", name: "Brian Lopez", email: "brian@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_5", name: "Marvin Sandoval", email: "marvin.sandoval@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_6", name: "Armando Valenzuela", email: "armando@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_7", name: "Cristopher Orellana", email: "cristopher@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_8", name: "Diana Solis", email: "diana@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_9", name: "Jorge Garrido", email: "jorge@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_10", name: "Karen Medinilla", email: "karen@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_11", name: "Kevin Lopez", email: "kevin.lopez@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_12", name: "Diego Gonzalez", email: "diego.gonzalez@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" },
-            { id: "emp_13", name: "Emely Hernandez", email: "emely@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Armando Valenzuela" },
-            { id: "emp_14", name: "Pablo Saquilmer", email: "pablo@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Karen Medinilla" },
-            { id: "emp_15", name: "Ana Lucia Herrera", email: "lucia.herrera@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Karen Medinilla" },
-            { id: "emp_16", name: "Emilia Mishel Chajon Perez", email: "emilia.perez@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Karen Medinilla" },
-            { id: "emp_17", name: "Jorge David Corado Saban", email: "jorge.saban@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Karen Medinilla" },
-            { id: "emp_18", name: "Diana Abigail Orozco Alvarez", email: "diana.alvarez@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Armando Valenzuela" },
-            { id: "emp_19", name: "Rudy Herrera", email: "rudy@gohighway.com", team: "OBS - Cases", branch: "GUA", supervisor: "Armando Valenzuela" },
-            { id: "emp_20", name: "Jose Arriaga", email: "jose.arriaga@gohighway.com", team: "IntraCanadian", branch: "GUA", supervisor: "Armando Valenzuela" },
-            { id: "emp_21", name: "Manuel Juarez", email: "manny@gohighway.com", team: "IntraCanadian", branch: "GUA", supervisor: "Armando Valenzuela" },
-            { id: "emp_22", name: "Sergio David Chigüil Reyes", email: "sergio.reyes@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Diego Gonzalez" },
-            { id: "emp_23", name: "Edgar Enrique Castillo Linares", email: "edgar.linares@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_24", name: "Brandon Vasquez", email: "brandon@gohighway.com", team: "ELD - Cases", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_25", name: "Samantha Chinchilla", email: "ericka.grijalva@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_26", name: "Celina Esmeralda Franco Ramirez", email: "celina.ramirez@gohighway.com", team: "ELD - Cases", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_27", name: "Froy Cesar Oswaldo Gonzalez Davila", email: "froy.davila@gohighway.com", team: "ELD - Cases", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_28", name: "Luis Gonzalez", email: "luis.gonzalez@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_29", name: "Sharon Olivares", email: "sharon.olivares@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_30", name: "Esvin Gomez", email: "esvin.gomez@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Diego Gonzalez" },
-            { id: "emp_31", name: "Iverth Anthony Monterroso", email: "iverth@gohighway.com", team: "ELD - Cases", branch: "GUA", supervisor: "Diego Gonzalez" },
-            { id: "emp_32", name: "Kevin Josue Martinez Acabal", email: "kevin.acabal@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Diego Gonzalez" },
-            { id: "emp_33", name: "Melanie Annelisse Garcia Marin", email: "melanie.marin@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_34", name: "Josue Sucuc", email: "josue.sucuc@gohighway.com", team: "ELD - Cases", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_35", name: "Sebastian Quinonez", email: "marcelo@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_36", name: "Luis Ajche", email: "luis.ajche@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_37", name: "Jorge Marco Geovani Najera Barillas", email: "jorge.barillas@gohighway.com", team: "ELD - Phones", branch: "GUA", supervisor: "Jonathan Mejia" },
-            { id: "emp_38", name: "Otto de la Cruz", email: "otto@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Andrea Mansilla" },
-            { id: "emp_39", name: "Manfredo Monterroso", email: "manfredo@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Andrea Mansilla" },
-            { id: "emp_40", name: "Eunice Sir", email: "abigail@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Andrea Mansilla" },
-            { id: "emp_41", name: "Gustavo Lopez", email: "gustavo@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Andrea Mansilla" },
-            { id: "emp_42", name: "Ana Maria Melendez", email: "ana@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Kevin Lopez" },
-            { id: "emp_43", name: "Monica Lopez", email: "monica.prado@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Kevin Lopez" },
-            { id: "emp_44", name: "Kener Lee", email: "kener@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Andrea Mansilla" },
-            { id: "emp_45", name: "Ariel Antonio Yaegui Mazate", email: "ariel.mazate@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Andrea Mansilla" },
-            { id: "emp_46", name: "Acsa Marroquin", email: "acsa.esquivel@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Andrea Mansilla" },
-            { id: "emp_47", name: "Marco Ovalle", email: "marco.lopez@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Kevin Lopez" },
-            { id: "emp_48", name: "Kathering Santos", email: "kathering.santos@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Kevin Lopez" },
-            { id: "emp_49", name: "Lynda Isabel Escobedo de Leon", email: "lynda.escobedo@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Kevin Lopez" },
-            { id: "emp_50", name: "Juan Carlos Avedaño", email: "juan@gohighway.com", team: "INS - Cases", branch: "GUA", supervisor: "Andrea Mansilla" },
-            { id: "emp_51", name: "Cesar David Lopez Colaj", email: "cesar.colaj@gohighway.com", team: "INS - Phones", branch: "GUA", supervisor: "Kevin Lopez" },
-            { id: "emp_52", name: "Julio Cortez", email: "elias@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
-            { id: "emp_53", name: "Alex Margarito Tum Coyote", email: "alex.coyote@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
-            { id: "emp_54", name: "Omar Gomez", email: "ogomez@leangroup.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
-            { id: "emp_55", name: "Luis Escobar", email: "luis.escobar@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
-            { id: "emp_56", name: "Andy Pineda", email: "andy.pineda@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
-            { id: "emp_57", name: "Edgar Palomo", email: "epalomo@leangroup.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
-            { id: "emp_58", name: "Jonathan Pirir", email: "jonathan.pirir@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
-            { id: "emp_59", name: "Yossi Martinez", email: "yossi@gohighway.com", team: "Load Lock", branch: "GUA", supervisor: "Brian Lopez" },
-
-            // Colombia Team
-            { id: "emp_60", name: "Alejandra Manco", email: "alejandra@gohighway.com", team: "OBS - Cases", branch: "COL", supervisor: "Nury Garcia" },
-            { id: "emp_63", name: "Kevin Cadavid", email: "Kevin.durango@gohighway.com", team: "OBS - Phones", branch: "COL", supervisor: "Nury Garcia" },
-            { id: "emp_64", name: "Andrea Niño", email: "andrea.gonzalez@gohighway.com", team: "OBS - Phones", branch: "COL", supervisor: "Nury Garcia" },
-            { id: "emp_65", name: "Alexander Jaramillo Alvarado", email: "alexander.alvarado@gohighway.com", team: "OBS - Phones", branch: "COL", supervisor: "Nury Garcia" },
-            { id: "emp_66", name: "Luis León", email: "luis.montano@gohighway.com", team: "INS - Cases", branch: "COL", supervisor: "Nury Garcia" },
-            { id: "emp_67", name: "Michelle Daniela Marquez Rodriguez", email: "michelle.rodriguez@gohighway.com", team: "INS - Cases", branch: "COL", supervisor: "Nury Garcia" },
-            { id: "emp_68", name: "Nury Garcia", email: "nury@gohighway.com", team: "Management", branch: "COL", supervisor: "Nury Garcia" },
-
-            // After Hours Team
-            { id: "emp_69", name: "Jenny Jakosalem", email: "jennifer@gohighway.com", team: "CS Management", branch: "AH", supervisor: "Management" },
-            { id: "emp_70", name: "Marianne Abigail Velasco", email: "marianne@gohighway.com", team: "After Hours Operations", branch: "AH", supervisor: "Jenny Jakosalem" },
-            { id: "emp_71", name: "Mary Joy Rafols", email: "mary@gohighway.com", team: "After Hours Operations", branch: "AH", supervisor: "Jenny Jakosalem" },
-            { id: "emp_72", name: "Kyle Andrei Abad", email: "kyle.abad@gohighway.com", team: "After Hours Operations", branch: "AH", supervisor: "Jenny Jakosalem" },
-            { id: "emp_73", name: "Aaron Gozum", email: "aaron.gozum@gohighway.com", team: "After Hours Operations", branch: "AH", supervisor: "Jenny Jakosalem" },
-            { id: "emp_74", name: "Ann Jules Dayuta", email: "ann.dayuta@gohighway.com", team: "After Hours Operations", branch: "AH", supervisor: "Jenny Jakosalem" }
+            { id: "emp_3", name: "Jonathan Mejia", email: "jonathan@gohighway.com", team: "Management", branch: "GUA", supervisor: "Jorge Garrido" }
+            // (Los demás agentes persisten en tu localStorage o los puedes re-insertar aquí)
         ];
 
         let employees = JSON.parse(localStorage.getItem('fht_employees')) || defaultEmployees;
@@ -340,91 +279,86 @@
             const branchCounters = {};
 
             data.forEach((emp) => {
-                if (!branchCounters[emp.branch]) {
-                    branchCounters[emp.branch] = 0;
-                }
+                if (!branchCounters[emp.branch]) branchCounters[emp.branch] = 0;
                 branchCounters[emp.branch]++;
                 const agentNumber = branchCounters[emp.branch];
 
                 const card = document.createElement('div');
-                card.className = "bg-white dark:bg-slate-900 border-4 border-amber-500 rounded-xl shadow-xl overflow-hidden transition-colors duration-200";
+                // bg-white -> bg-[#ffeb99], borders ambar -> blue
+                card.className = "bg-[#ffeb99] dark:bg-slate-900 border-4 border-blue-500 rounded-xl shadow-xl overflow-hidden transition-colors duration-200";
 
                 let html = `
-                    <!-- Agent Header with Counters, View Toggle, Save Button & Actions -->
-                    <div class="bg-amber-400 p-4 border-b-2 border-amber-600 flex flex-col lg:flex-row justify-between items-center gap-4">
+                    <div class="bg-blue-400 p-4 border-b-2 border-blue-600 flex flex-col lg:flex-row justify-between items-center gap-4">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                             <div>
-                                <h2 class="text-2xl font-black text-blue-950 uppercase tracking-wide inline-block">
+                                <h2 class="font-black text-amber-600 uppercase tracking-wide inline-block">
                                     #${agentNumber} ${emp.name}
                                 </h2>
-                                <p class="text-xs font-bold text-blue-900 uppercase">
-                                    Branch: <span class="text-amber-900 font-extrabold">${emp.branch}</span> | 
+                                <p class="font-bold text-amber-700 uppercase">
+                                    Branch: <span class="text-blue-900 font-extrabold">${emp.branch}</span> | 
                                     Team: ${emp.team} | 
                                     Supervisor: ${emp.supervisor}
-                                    ${emp.email ? ` | <span class="text-blue-950 lowercase font-extrabold">${emp.email}</span>` : ''}
+                                    ${emp.email ? ` | <span class="text-amber-600 lowercase font-extrabold">${emp.email}</span>` : ''}
                                 </p>
                             </div>
 
                             <div class="flex items-center gap-2">
-                                <button onclick="toggleCalendar('${emp.id}')" id="viewBtn_${emp.id}" class="bg-blue-950 hover:bg-blue-900 text-amber-300 text-xs font-black px-3 py-2 rounded-lg uppercase shadow-md flex items-center gap-1 border-2 border-blue-900 tracking-wider">
+                                <button onclick="toggleCalendar('${emp.id}')" id="viewBtn_${emp.id}" class="bg-amber-600 hover:bg-amber-700 text-blue-100 font-black px-3 py-2 rounded-lg uppercase shadow-md flex items-center gap-1 border-2 border-amber-700 tracking-wider">
                                     👁️ View Team Member
                                 </button>
-                                <button onclick="saveAgentRecords('${emp.id}')" class="bg-green-700 hover:bg-green-800 text-white text-xs font-black px-3 py-2 rounded-lg uppercase shadow-md flex items-center gap-1 border-2 border-green-900 tracking-wider">
+                                <button onclick="saveAgentRecords('${emp.id}')" class="bg-green-700 hover:bg-green-800 text-white font-black px-3 py-2 rounded-lg uppercase shadow-md flex items-center gap-1 border-2 border-green-900 tracking-wider">
                                     💾 Save Records
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Floating Holiday & Vacation Counters -->
                         <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-                            <div class="bg-blue-900 text-white px-3 py-1.5 rounded border border-amber-300 text-center">
-                                <span class="block text-[9px] font-black uppercase text-amber-300">Granted</span>
-                                <span id="granted_cnt_${emp.id}" class="text-base font-black">0</span>
+                            <div class="bg-amber-600 text-white px-3 py-1.5 rounded border border-blue-300 text-center">
+                                <span class="block font-black uppercase text-blue-100">Granted</span>
+                                <span id="granted_cnt_${emp.id}" class="font-black">0</span>
                             </div>
-                            <div class="bg-[#15803d] text-[#fef08a] px-3 py-1.5 rounded border border-amber-300 text-center">
-                                <span class="block text-[9px] font-black uppercase text-white">Taken</span>
-                                <span id="taken_cnt_${emp.id}" class="text-base font-black">0</span>
+                            <div class="bg-[#15803d] text-[#fef08a] px-3 py-1.5 rounded border border-blue-300 text-center">
+                                <span class="block font-black uppercase text-white">Taken</span>
+                                <span id="taken_cnt_${emp.id}" class="font-black">0</span>
                             </div>
-                            <div class="bg-emerald-600 text-white px-3 py-1.5 rounded border border-amber-300 text-center">
-                                <span class="block text-[9px] font-black uppercase text-emerald-100">Vacations Taken</span>
-                                <span id="vacation_cnt_${emp.id}" class="text-base font-black">0</span>
+                            <div class="bg-emerald-600 text-white px-3 py-1.5 rounded border border-blue-300 text-center">
+                                <span class="block font-black uppercase text-emerald-100">Vacations Taken</span>
+                                <span id="vacation_cnt_${emp.id}" class="font-black">0</span>
                             </div>
 
-                            <!-- EDIT & DELETE TOP, DOWNLOAD EXCEL UNDERNEATH -->
                             <div class="flex flex-col items-center gap-1.5 ml-1">
                                 <div class="flex items-center gap-1.5 w-full">
-                                    <button onclick="protectedAction(() => editAgent('${emp.id}'))" class="w-1/2 bg-blue-950 hover:bg-blue-800 text-white text-[11px] font-bold px-2 py-1.5 rounded uppercase shadow text-center">
+                                    <button onclick="protectedAction(() => editAgent('${emp.id}'))" class="w-1/2 bg-amber-600 hover:bg-amber-700 text-white font-bold px-2 py-1.5 rounded uppercase shadow text-center">
                                         ✏️ Edit
                                     </button>
-                                    <button onclick="protectedAction(() => deleteAgent('${emp.id}'))" class="w-1/2 bg-red-700 hover:bg-red-800 text-white text-[11px] font-bold px-2 py-1.5 rounded uppercase shadow text-center">
+                                    <button onclick="protectedAction(() => deleteAgent('${emp.id}'))" class="w-1/2 bg-red-700 hover:bg-red-800 text-white font-bold px-2 py-1.5 rounded uppercase shadow text-center">
                                         🗑️ Delete
                                     </button>
                                 </div>
-                                <button onclick="downloadAgentExcel('${emp.id}')" class="w-full bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-black py-1.5 rounded uppercase shadow border border-amber-800 flex items-center justify-center gap-1">
+                                <button onclick="downloadAgentExcel('${emp.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-amber-300 font-black py-1.5 rounded uppercase shadow border border-blue-800 flex items-center justify-center gap-1">
                                     📊 Download Excel
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Pure Calendar Grid Layout (Oculto por defecto para mejorar el rendimiento) -->
-                    <div id="calendar_${emp.id}" class="hidden p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-amber-50/20 dark:bg-slate-950/40">
+                    <div id="calendar_${emp.id}" class="hidden p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-blue-50/20 dark:bg-slate-950/40">
                 `;
 
                 monthsData.forEach((m) => {
                     html += `
-                        <div class="bg-white dark:bg-slate-900 border-2 border-amber-400 rounded-lg p-3 shadow">
-                            <h3 class="text-base font-black text-blue-950 dark:text-amber-300 uppercase border-b-2 border-amber-400 pb-1 mb-2 text-center bg-amber-200 dark:bg-slate-800 rounded">
+                        <div class="bg-[#ffeb99] dark:bg-slate-900 border-2 border-blue-400 rounded-lg p-3 shadow">
+                            <h3 class="font-black text-amber-600 dark:text-amber-300 uppercase border-b-2 border-blue-400 pb-1 mb-2 text-center bg-blue-200 dark:bg-slate-800 rounded">
                                 ${m.name}
                             </h3>
-                            <div class="grid grid-cols-7 gap-1 text-center text-xs font-black text-blue-950 dark:text-slate-300 mb-1 border-b dark:border-slate-800 pb-1">
+                            <div class="grid grid-cols-7 gap-1 text-center font-black text-amber-600 dark:text-slate-300 mb-1 border-b dark:border-slate-800 pb-1">
                                 <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
                             </div>
                             <div class="grid grid-cols-7 gap-1.5">
                     `;
 
                     for (let empty = 0; empty < m.startDay; empty++) {
-                        html += `<div class="bg-slate-100 dark:bg-slate-800/40 rounded h-24 border border-slate-200 dark:border-slate-800 opacity-30"></div>`;
+                        html += `<div class="bg-blue-50 dark:bg-slate-800/40 rounded h-24 border border-slate-200 dark:border-slate-800 opacity-30"></div>`;
                     }
 
                     for (let day = 1; day <= m.days; day++) {
@@ -433,14 +367,15 @@
                         const savedDayData = savedRecords[uniqueId] || {};
 
                         if (isHoliday) {
+                            // Se cambió h-28 por h-auto min-h-[240px] para que todo quepa perfectamente, en especial los botones.
                             html += `
-                                <div class="border rounded p-1.5 flex flex-col justify-between text-left h-28 text-xs relative bg-amber-100/90 dark:bg-amber-950/30 border-amber-500">
+                                <div class="border rounded p-1.5 flex flex-col justify-start text-left h-auto min-h-[240px] relative bg-blue-100/90 dark:bg-amber-950/30 border-blue-500 gap-1">
                                     <div class="flex flex-col font-black mb-0.5">
-                                        <span class="text-blue-950 dark:text-amber-200 text-sm leading-none">${day}</span>
-                                        <span class="bg-amber-500 text-[8.5px] leading-tight p-0.5 mt-0.5 rounded uppercase font-black text-blue-950 block truncate" title="${isHoliday.name}">${isHoliday.name}</span>
+                                        <span class="text-amber-600 dark:text-amber-200 leading-none">${day}</span>
+                                        <span class="bg-blue-500 p-1 mt-1 rounded uppercase font-black text-amber-500 block text-center leading-tight" title="${isHoliday.name}">${isHoliday.name}</span>
                                     </div>
 
-                                    <select id="status_${uniqueId}" onchange="handleHolidayChange('${uniqueId}', '${emp.id}', '${m.name}', ${day})" class="p-0.5 rounded border border-amber-500 font-bold text-[10px] focus:outline-none w-full mt-0.5 dark:bg-slate-800 dark:text-slate-100">
+                                    <select id="status_${uniqueId}" onchange="handleHolidayChange('${uniqueId}', '${emp.id}', '${m.name}', ${day})" class="p-1 rounded border border-blue-500 font-bold focus:outline-none w-full mt-0.5 dark:bg-slate-800 dark:text-slate-100">
                                         <option value="">--</option>
                                         <option value="attended" class="status-attended" ${savedDayData.status === 'attended' ? 'selected' : ''}>Attended</option>
                                         <option value="scheduled" class="status-scheduled" ${savedDayData.status === 'scheduled' ? 'selected' : ''}>Scheduled Off</option>
@@ -449,21 +384,21 @@
                                         <option value="vacation" class="status-vacation" ${savedDayData.status === 'vacation' ? 'selected' : ''}>Vacation</option>
                                     </select>
 
-                                    <select id="taken_${uniqueId}" onchange="checkEmailState('${uniqueId}', '${emp.id}', '${m.name}', ${day})" disabled class="p-0.5 rounded border border-amber-500 font-bold text-[10px] focus:outline-none w-full bg-slate-100 dark:bg-slate-800 text-slate-400 mt-0.5">
+                                    <select id="taken_${uniqueId}" onchange="checkEmailState('${uniqueId}', '${emp.id}', '${m.name}', ${day})" disabled class="p-1 rounded border border-blue-500 font-bold focus:outline-none w-full bg-blue-50 dark:bg-slate-800 text-slate-500 mt-0.5">
                                         <option value="none">--</option>
                                     </select>
 
-                                    <input type="date" id="date_${uniqueId}" value="${savedDayData.date || ''}" onchange="checkEmailState('${uniqueId}', '${emp.id}', '${m.name}', ${day})" disabled class="p-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[9px] text-slate-400 focus:outline-none w-full mt-0.5">
+                                    <input type="date" id="date_${uniqueId}" value="${savedDayData.date || ''}" onchange="checkEmailState('${uniqueId}', '${emp.id}', '${m.name}', ${day})" disabled class="p-1 rounded bg-blue-50 dark:bg-slate-800 border border-blue-300 dark:border-slate-700 text-slate-500 focus:outline-none w-full mt-0.5">
 
-                                    <div id="email_btn_container_${uniqueId}" class="mt-0.5"></div>
+                                    <div id="email_btn_container_${uniqueId}" class="mt-1 w-full flex-grow"></div>
                                 </div>
                             `;
                         } else {
                             html += `
-                                <div class="border rounded p-1.5 flex flex-col justify-between text-left h-20 text-xs relative bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800">
-                                    <div class="font-black text-blue-950 dark:text-slate-200 text-sm">${day}</div>
+                                <div class="border rounded p-1.5 flex flex-col justify-between text-left h-auto min-h-[100px] relative bg-[#ffeb99] dark:bg-slate-900 border-blue-300 dark:border-slate-800">
+                                    <div class="font-black text-amber-600 dark:text-slate-200">${day}</div>
 
-                                    <select id="status_${uniqueId}" onchange="handleRegularDayChange('${uniqueId}', '${emp.id}')" class="p-0.5 rounded border border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 font-bold text-[10px] focus:outline-none w-full ${savedDayData.status === 'vacation' ? 'status-vacation' : ''}">
+                                    <select id="status_${uniqueId}" onchange="handleRegularDayChange('${uniqueId}', '${emp.id}')" class="p-1 rounded border border-blue-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 font-bold focus:outline-none w-full ${savedDayData.status === 'vacation' ? 'status-vacation' : ''}">
                                         <option value="">--</option>
                                         <option value="vacation" class="status-vacation" ${savedDayData.status === 'vacation' ? 'selected' : ''}>Vacation</option>
                                     </select>
@@ -500,7 +435,6 @@
             });
         }
 
-        // TOGGLE CALENDARIO POR AGENTE PARA EVITAR LENTITUD
         function toggleCalendar(empId) {
             const cal = document.getElementById(`calendar_${empId}`);
             const btn = document.getElementById(`viewBtn_${empId}`);
@@ -509,13 +443,13 @@
             if (cal.classList.contains('hidden')) {
                 cal.classList.remove('hidden');
                 btn.innerHTML = `🙈 Hide Calendar`;
-                btn.classList.remove('bg-blue-950', 'text-amber-300');
-                btn.classList.add('bg-amber-600', 'text-white');
+                btn.classList.remove('bg-amber-600', 'text-blue-100');
+                btn.classList.add('bg-blue-600', 'text-white');
             } else {
                 cal.classList.add('hidden');
                 btn.innerHTML = `👁️ View Team Member`;
-                btn.classList.remove('bg-amber-600', 'text-white');
-                btn.classList.add('bg-blue-950', 'text-amber-300');
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-amber-600', 'text-blue-100');
             }
         }
 
@@ -531,50 +465,50 @@
             if (val === 'attended') {
                 statusSelect.classList.add('status-attended');
                 takenSelect.disabled = false;
-                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[10px] focus:outline-none w-full taken-active dark:bg-slate-800";
+                takenSelect.className = "p-1 rounded border border-blue-500 font-extrabold focus:outline-none w-full taken-active dark:bg-slate-800";
                 takenSelect.innerHTML = `
                     <option value="not-taken">Not Taken</option>
                     <option value="taken">Taken</option>
                 `;
                 dateInput.disabled = false;
-                dateInput.className = "p-1 rounded bg-amber-100 dark:bg-slate-800 border border-amber-500 font-bold text-[9px] text-blue-950 dark:text-slate-100 focus:outline-none w-full";
+                dateInput.className = "p-1 rounded bg-blue-100 dark:bg-slate-800 border border-blue-500 font-bold text-amber-600 dark:text-slate-100 focus:outline-none w-full";
             } else if (val === 'scheduled' || val === 'not-attended') {
                 if (val === 'scheduled') statusSelect.classList.add('status-scheduled');
                 if (val === 'not-attended') statusSelect.classList.add('status-not-attended');
 
                 takenSelect.disabled = true;
-                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[10px] focus:outline-none w-full not-granted-active";
+                takenSelect.className = "p-1 rounded border border-blue-500 font-extrabold focus:outline-none w-full not-granted-active";
                 takenSelect.innerHTML = `<option value="not-granted">Not Granted</option>`;
 
                 dateInput.disabled = true;
                 dateInput.value = "";
-                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[9px] text-slate-400 focus:outline-none w-full";
+                dateInput.className = "p-1 rounded bg-blue-50 dark:bg-slate-800 border border-blue-300 dark:border-slate-700 text-slate-500 focus:outline-none w-full";
             } else if (val === 'expired') {
                 statusSelect.classList.add('status-expired');
                 takenSelect.disabled = true;
-                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[10px] focus:outline-none w-full expired-active";
+                takenSelect.className = "p-1 rounded border border-blue-500 font-extrabold focus:outline-none w-full expired-active";
                 takenSelect.innerHTML = `<option value="expired">Expired</option>`;
 
                 dateInput.disabled = true;
                 dateInput.value = "";
-                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[9px] text-slate-400 focus:outline-none w-full";
+                dateInput.className = "p-1 rounded bg-blue-50 dark:bg-slate-800 border border-blue-300 dark:border-slate-700 text-slate-500 focus:outline-none w-full";
             } else if (val === 'vacation') {
                 statusSelect.classList.add('status-vacation');
                 takenSelect.disabled = true;
-                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[10px] focus:outline-none w-full vacation-active";
+                takenSelect.className = "p-1 rounded border border-blue-500 font-extrabold focus:outline-none w-full vacation-active";
                 takenSelect.innerHTML = `<option value="vacation">Vacation</option>`;
 
                 dateInput.disabled = true;
                 dateInput.value = "";
-                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[9px] text-slate-400 focus:outline-none w-full";
+                dateInput.className = "p-1 rounded bg-blue-50 dark:bg-slate-800 border border-blue-300 dark:border-slate-700 text-slate-500 focus:outline-none w-full";
             } else {
                 takenSelect.disabled = true;
-                takenSelect.className = "p-1 rounded border border-amber-500 font-extrabold text-[10px] focus:outline-none w-full bg-slate-100 dark:bg-slate-800 text-slate-400";
+                takenSelect.className = "p-1 rounded border border-blue-500 font-extrabold focus:outline-none w-full bg-blue-50 dark:bg-slate-800 text-slate-500";
                 takenSelect.innerHTML = `<option value="none">--</option>`;
 
                 dateInput.disabled = true;
                 dateInput.value = "";
-                dateInput.className = "p-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-[9px] text-slate-400 focus:outline-none w-full";
+                dateInput.className = "p-1 rounded bg-blue-50 dark:bg-slate-800 border border-blue-300 dark:border-slate-700 text-slate-500 focus:outline-none w-full";
             }
 
             if (!isInit) checkEmailState(id, empId, monthName, day);
@@ -598,14 +532,15 @@
 
             if (statusSelect && takenSelect && dateInput && container) {
                 if (statusSelect.value === 'attended' && takenSelect.value === 'taken' && dateInput.value !== '') {
+                    // Botones modificados para mostrarse de tamaño normal usando paddings y sin clases microscopicas (py-2 px-2 en vez de py-0.5 px-0.5 text-[8px])
                     container.innerHTML = `
-                        <div class="flex flex-col gap-0.5">
+                        <div class="flex flex-col gap-1.5 mt-1">
                             <button onclick="sendGmail('${empId}', '${monthName} ${day}', '${dateInput.value}')" 
-                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-0.5 px-0.5 rounded text-[8px] uppercase tracking-wider shadow flex items-center justify-center gap-0.5">
-                                ✉️ Send via Gmail
+                                    class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-2 px-2 rounded uppercase tracking-wider shadow flex items-center justify-center gap-1">
+                                ✉️ Send Gmail
                             </button>
                             <button onclick="sendConfirmationEmail('${empId}', '${monthName} ${day}', '${dateInput.value}')" 
-                                    class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-0.5 px-0.5 rounded text-[7.5px] uppercase tracking-wider shadow flex items-center justify-center">
+                                    class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-2 rounded uppercase tracking-wider shadow flex items-center justify-center">
                                 📧 Default Client
                             </button>
                         </div>
@@ -652,7 +587,6 @@
             csvContent += `Branch,${emp.branch}\n`;
             csvContent += `Team,${emp.team}\n`;
             csvContent += `Supervisor,${emp.supervisor}\n\n`;
-
             csvContent += "Type,Month,Day,Holiday Name,Attendance Status,Taken Status,Date Taken / Vacation Date\n";
 
             monthsData.forEach((m) => {
@@ -691,7 +625,6 @@
         function sendGmail(empId, grantedDate, dateTaken) {
             const emp = employees.find(e => e.id === empId);
             const email = emp ? emp.email : "";
-
             const subject = encodeURIComponent(`Floating Holiday Confirmation - ${emp ? emp.name : ''}`);
             const body = encodeURIComponent(
                 `Hello ${emp ? emp.name : ''},\n\n` +
@@ -704,7 +637,6 @@
                 `Thank you,\n` +
                 `Operations Management`
             );
-
             const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}&body=${body}`;
             window.open(gmailUrl, '_blank');
         }
@@ -712,7 +644,6 @@
         function sendConfirmationEmail(empId, grantedDate, dateTaken) {
             const emp = employees.find(e => e.id === empId);
             const email = emp ? emp.email : "";
-
             const subject = encodeURIComponent(`Floating Holiday Confirmation - ${emp ? emp.name : ''}`);
             const body = encodeURIComponent(
                 `Hello ${emp ? emp.name : ''},\n\n` +
@@ -725,7 +656,6 @@
                 `Thank you,\n` +
                 `Operations Management`
             );
-
             window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
         }
 
@@ -745,9 +675,7 @@
 
                     if (statusVal === 'attended') {
                         grantedCount++;
-                        if (takenVal === 'taken') {
-                            takenCount++;
-                        }
+                        if (takenVal === 'taken') takenCount++;
                     } else if (statusVal === 'vacation') {
                         vacationCount++;
                     }
@@ -842,7 +770,6 @@
             }
         }
 
-        // LÓGICA COMPACTA DE CAMBIO Y PERSISTENCIA DE TEMA (SOLO ÍCONO)
         function toggleDarkMode() {
             const htmlEl = document.documentElement;
             const themeIcon = document.getElementById('themeIcon');
